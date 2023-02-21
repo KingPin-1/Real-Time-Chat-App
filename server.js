@@ -18,12 +18,17 @@ const rooms = [
 
 io.on('connection', function (socket) {
     socket.on('createUser', function (username) {
-        socket.usernames = username;
+        socket.username = username;
         usernames[username] = username;
         socket.currentRoom = 'globalChat';
 
         socket.join('globalChat');
         socket.emit('updateChat', 'INFO', 'You have joined global chat');
+    });
+    socket.on('sendMessage', function (data) {
+        io.sockets
+            .to(socket.currentRoom)
+            .emit('updateChat', socket.username, data);
     });
 });
 
